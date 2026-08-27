@@ -1,0 +1,34 @@
+---
+description: Правила fabweb — версия, архитектура, роли, workflow
+alwaysApply: true
+---
+
+# Правила fabweb
+
+Полный текст: `docs/RULES.md`. Кратко:
+
+## Версия (обязательно при любом изменении кода)
+
+| Тип | Инкремент |
+|-----|-----------|
+| Мелкая правка | `X.Y.Z+1` |
+| Средняя (экран/API/поля) | `X.Y+1.0` |
+| Новый модуль / breaking / глобальное | `X+1.0.0` |
+
+1. Правь `/VERSION` → `pnpm version:sync` → строка в `docs/VERSIONING.md`
+2. UI/health только через `APP_VERSION` из `@fabweb/shared`
+
+До `1.0.0` новые доменные модули обычно дают **minor** (`0.Y+1.0`), чтобы зарезервировать `1.0.0` под готовый MVP.
+
+## Инварианты
+
+- Offline-first: Local Hub = primary
+- Производство = `WorkOrder`; проекты = дерево `parent_project_id`
+- Approve WO: `admin`; fast-track: `admin`/`supervisor`
+- Валюта RUB; 152-ФЗ (consent, audit, RBAC)
+
+## Workflow WO
+
+`draft → pending_approval → approved → queued → assigned → in_progress → [post_process] → done|failed`
+
+Не коммитить без явной просьбы пользователя.

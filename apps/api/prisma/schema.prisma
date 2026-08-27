@@ -1,0 +1,240 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  worker
+  supervisor
+  guest
+}
+
+enum ProjectType {
+  diy
+  machine_part
+  device
+  pcb
+  firmware
+  mixed
+}
+
+enum ProjectDomain {
+  design_bureau
+  commercial_3d
+}
+
+enum ProjectStatus {
+  draft
+  pending_review
+  active
+  completed
+  archived
+}
+
+enum AssetKind {
+  photo
+  document
+  model_3d
+  pcb
+  firmware
+  other
+}
+
+enum WorkOrderSource {
+  commercial
+  internal
+}
+
+enum WorkOrderPriority {
+  low
+  normal
+  high
+  urgent
+}
+
+enum WorkOrderTech {
+  fdm
+  sla
+  laser
+}
+
+enum WorkOrderStatus {
+  draft
+  pending_approval
+  approved
+  queued
+  assigned
+  in_progress
+  post_process
+  done
+  failed
+  cancelled
+}
+
+enum DeductionMode {
+  auto
+  manual
+}
+
+enum MachineType {
+  fdm_printer
+  resin_printer
+  laser
+  solder
+  wash
+  uv_cure
+  accessory
+}
+
+enum MachineStatus {
+  idle
+  busy
+  error
+  maintenance
+  offline
+}
+
+enum ConnectorType {
+  manual
+  moonraker
+  octoprint
+  custom
+}
+
+model User {
+  id                String         @id @default(uuid())
+  email             String         @unique
+  password_hash     String
+  full_name         String
+  phone             String?
+  role              UserRole
+  micro_roles       String[]       @default([])
+  pd_consent_at     DateTime?
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  projects          Project[]
+  assets            ProjectAsset[]
+  work_orders       WorkOrder[]    @relation("WorkOrderRequester")
+  approved_orders   WorkOrder[]    @relation("WorkOrderApprover")
+}
+
+model Project {
+  id                   String         @id @default(uuid())
+  title                String
+  summary              String         @default("")
+  description          String         @default("")
+  goals                String         @default("")
+  tags                 String[]       @default([])
+  settings             Json           @default("{}")
+  type                 ProjectType
+  domain               ProjectDomain  @default(design_bureau)
+  status               ProjectStatus  @default(draft)
+  parent_project_id    String?
+  parent_project       Project?       @relation("ProjectBranches", fields: [parent_project_id], references: [id])
+  branches             Project[]      @relation("ProjectBranches")
+  owner_id             String
+  owner                User           @relation(fields: [owner_id], references: [id])
+  showcase_published   Boolean        @default(false)
+  showcase_photos      String[]       @default([])
+  showcase_description String         @default("")
+  assets               ProjectAsset[]
+  work_orders          WorkOrder[]
+  created_at           DateTime       @default(now())
+  updated_at           DateTime       @updatedAt
+
+  @@index([owner_id])
+  @@index([parent_project_id])
+  @@index([status])
+}
+
+model ProjectAsset {
+  id            String    @id @default(uuid())
+  project_id    String
+  project       Project   @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  kind          AssetKind
+  title         String
+  description   String    @default("")
+  filename      String
+  storage_path  String
+  mime_type     String
+  size_bytes    Int
+  is_cover      Boolean   @default(false)
+  version       Int       @default(1)
+  uploaded_by   String
+  uploader      User      @relation(fields: [uploaded_by], references: [id])
+  created_at    DateTime  @default(now())
+
+  @@index([project_id])
+  @@index([kind])
+}
+
+model WorkOrder {
+  id              String            @id @default(uuid())
+  title           String
+  notes           String            @default("")
+  source          WorkOrderSource   @default(commercial)
+  priority        WorkOrderPriority @default(normal)
+  status          WorkOrderStatus   @default(draft)
+  tech            WorkOrderTech
+  deduction_mode  DeductionMode     @default(manual)
+  project_id      String?
+  project         Project?          @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  artifact_id     String?
+  requested_by    String
+  requester       User              @relation("WorkOrderRequester", fields: [requested_by], references: [id])
+  approved_by     String?
+  approver        User?             @relation("WorkOrderApprover", fields: [approved_by], references: [id])
+  machine_id      String?
+  machine         Machine?          @relation(fields: [machine_id], references: [id], onDelete: SetNull)
+  queue_position  Int?
+  cost_input      Json?
+  cost_breakdown  Json?
+  sub_jobs        Json              @default("[]")
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+
+  @@index([status])
+  @@index([priority])
+  @@index([tech])
+  @@index([requested_by])
+  @@index([project_id])
+  @@index([machine_id])
+  @@index([queue_position])
+}
+
+model Machine {
+  id                 String         @id @default(uuid())
+  name               String
+  type               MachineType
+  model              String
+  purpose            String         @default("")
+  capabilities       Json
+  loaded_material    String?
+  motor_hours        Float          @default(0)
+  status             MachineStatus  @default(offline)
+  /// stub | planned | connected — интеграция коннектора
+  integration_status String         @default("stub")
+  connector_type     ConnectorType  @default(manual)
+  connector_host     String?
+  connector_port     Int?
+  connector_config   Json           @default("{}")
+  live_status        Json?
+  camera_url         String?
+  /// Путь к фото в web public, напр. /machines/k1-max.png
+  image_url          String?
+  notes              String         @default("")
+  sort_order         Int            @default(0)
+  enabled            Boolean        @default(true)
+  work_orders        WorkOrder[]
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([enabled])
+}

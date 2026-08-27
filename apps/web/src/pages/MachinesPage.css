@@ -1,0 +1,172 @@
+.machines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.machine-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-left-width: 4px;
+  border-radius: 14px;
+  padding: 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.machine-card.status-offline {
+  border-left-color: #64748b;
+}
+
+.machine-card.status-idle {
+  border-left-color: #16a34a;
+}
+
+.machine-card.status-busy {
+  border-left-color: #2563eb;
+}
+
+.machine-card.status-error {
+  border-left-color: #dc2626;
+}
+
+.machine-card.status-maintenance {
+  border-left-color: #c026d3;
+}
+
+.machine-card__visual {
+  position: relative;
+  height: 180px;
+  background:
+    radial-gradient(ellipse at 50% 80%, rgba(148, 163, 184, 0.18), transparent 65%),
+    linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.machine-card__img {
+  max-height: 160px;
+  max-width: 88%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+}
+
+.machine-card__img-placeholder {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
+
+.machine-card__visual .badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.machine-card__head,
+.machine-card__purpose,
+.machine-meta,
+.machine-card__notes,
+.machine-live-hint,
+.machine-actions {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.machine-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.machine-card__head h3 {
+  font-size: 1.05rem;
+  margin-bottom: 2px;
+}
+
+.machine-card__purpose {
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.machine-meta {
+  display: grid;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.machine-meta dt {
+  color: #94a3b8;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.machine-meta dd {
+  color: #334155;
+  margin: 0;
+}
+
+.machine-card__notes {
+  font-size: 0.82rem;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  line-height: 1.4;
+}
+
+.machine-live-hint {
+  font-size: 0.82rem;
+}
+
+.machine-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  align-items: center;
+}
+
+.machine-actions select {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  background: #fff;
+}
+
+/* Статусы станков: разные hue, насыщенный фон + контрастный текст */
+.badge-m-offline {
+  background: #cbd5e1;
+  color: #0f172a;
+  box-shadow: inset 0 0 0 1px #64748b;
+}
+
+.badge-m-idle {
+  background: #4ade80;
+  color: #052e16;
+  box-shadow: inset 0 0 0 1px #15803d;
+}
+
+.badge-m-busy {
+  background: #3b82f6;
+  color: #eff6ff;
+  box-shadow: inset 0 0 0 1px #1d4ed8;
+}
+
+.badge-m-error {
+  background: #ef4444;
+  color: #fef2f2;
+  box-shadow: inset 0 0 0 1px #b91c1c;
+}
+
+.badge-m-maintenance {
+  background: #e879f9;
+  color: #4a044e;
+  box-shadow: inset 0 0 0 1px #a21caf;
+}

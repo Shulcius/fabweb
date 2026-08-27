@@ -1,0 +1,30 @@
+.header-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.projects-table-wrap {
+  overflow-x: auto;
+}
+
+.project-row {
+  cursor: pointer;
+}
+
+.project-row:hover {
+  background: #f8fafc;
+}
+
+.row-summary {
+  font-size: 0.8rem;
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge-draft { background: #f1f5f9; color: #475569; }
+.badge-pending_review { background: #fef3c7; color: #92400e; }
+.badge-active { background: #dbeafe; color: #1e40af; }
+.badge-completed { background: #dcfce7; color: #166534; }
+.badge-archived { background: #f3f4f6; color: #6b7280; }

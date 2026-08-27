@@ -1,0 +1,22 @@
+{
+  "name": "fabweb",
+  "private": true,
+  "version": "0.5.1",
+  "description": "Offline-first mini-factory & design bureau platform",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @fabweb/api dev",
+    "dev:web": "pnpm --filter @fabweb/web dev",
+    "db:up": "docker compose -f deploy/local/docker-compose.yml up -d postgres redis",
+    "db:setup": "pnpm --filter @fabweb/api db:generate && pnpm --filter @fabweb/api db:migrate && pnpm --filter @fabweb/api db:seed",
+    "start": "pnpm --filter @fabweb/shared build && pnpm --filter @fabweb/costing build && pnpm -r --parallel dev",
+    "version:sync": "node scripts/sync-version.mjs",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

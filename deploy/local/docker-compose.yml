@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fabweb
+      POSTGRES_PASSWORD: fabweb
+      POSTGRES_DB: fabweb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
+
+  # API и Web — раскомментировать после добавления Dockerfile
+  # api:
+  #   build:
+  #     context: ../..
+  #     dockerfile: deploy/local/Dockerfile.api
+  #   environment:
+  #     PORT: 3000
+  #     DATABASE_URL: postgres://fabweb:fabweb@postgres:5432/fabweb
+  #     REDIS_URL: redis://redis:6379
+  #   volumes:
+  #     - fabdata:/data
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   restart: unless-stopped
+
+volumes:
+  pgdata:
+  fabdata:
